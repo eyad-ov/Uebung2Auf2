@@ -3,8 +3,7 @@ public class Train extends Thread{
     private int trainID;
     static int i=0;
     private RailAB trackSection ;
-    private boolean direction = true; //east when true
-    private boolean leave = false;
+    private int direction = 1; //east when 1, west when 2
 
     public Train(RailAB ts){
         trackSection = ts;
@@ -14,7 +13,8 @@ public class Train extends Thread{
     public int getTrainID(){
         return trainID;
     }
-    public boolean getDirection(){
+
+    public int getDirection(){
         return direction;
     }
     @Override
@@ -43,14 +43,12 @@ public class Train extends Thread{
 
     }
     public  void goEast(){
-        direction =true;
-        System.out.println("East " + trainID);
+        direction =1;
         trackSection.enter(this);
 
     }
     public  void goWest(){
-        direction = false;
-        System.out.println("West " + trainID);
+        direction = 2;
         trackSection.enter(this);
 
 

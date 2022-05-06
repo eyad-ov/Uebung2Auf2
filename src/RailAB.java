@@ -1,33 +1,34 @@
 import java.util.ArrayList;
 
 public class RailAB {
-    // first time all west waiting!?
-    //int trains = 3;
-    ArrayList<Train> trains = new ArrayList<Train>();
-    boolean direction = true; //east when true
+    ArrayList<Train> trains = new ArrayList<>();
+
+    /*
+       0 = neutral
+       1 = east
+       2 = wast
+    */
+    int direction = 0;
 
     public synchronized void enter(Train train){
 
-        while(trains.size()==3 || this.direction != train.getDirection()){
+        while(trains.size()==3 || ( this.direction !=0 && this.direction != train.getDirection() ) ){
                 try{
                     wait();
                 }
 
-                catch(InterruptedException ex){}
-
-                if(trains.isEmpty()){
-                    this.direction = train.getDirection();
+                catch(InterruptedException ex){
+                    ex.printStackTrace();
                 }
             }
 
-        notifyAll(); // wichtig !?
         trains.add(train);
-        System.out.println("train " + train.getTrainID() + " entered the track section, the direction is " +(direction ?"east":"west"));
+        this.direction = train.getDirection();
+        System.out.println("train " + train.getTrainID() + " entered the track section, the direction is " +(direction==1 ?"east":"west"));
 
     }
 
     public synchronized void leave(Train train){
-        // rheinfolge achten
         while(trains.get(0)!= train){
             try{
                 wait();
@@ -37,6 +38,10 @@ public class RailAB {
             }
         }
         trains.remove(train);
+
+        if(trains.isEmpty()){
+            this.direction=0;
+        }
         System.out.println("train " + train.getTrainID() + " left the track section");
         notifyAll();
     }
